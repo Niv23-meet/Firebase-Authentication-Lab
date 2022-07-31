@@ -10,11 +10,11 @@ config = {
   "messagingSenderId": "1053387551914",
   "appId": "1:1053387551914:web:4276f2616109aea6b08cd3",
   "measurementId": "G-6BZJYTVZTR",
-  "databaseURL": ""
+  "databaseURL": "https://console.firebase.google.com/u/0/project/first-firebase-ff06e/database/first-firebase-ff06e-default-rtdb/data/~2F"
 }
 firebase = pyrebase.initialize_app(config)
 auth = firebase.auth()
-
+db = firebase.database()
 app = Flask(__name__, template_folder='templates', static_folder='static')
 app.config['SECRET_KEY'] = 'super-secret-key'
 
@@ -43,7 +43,9 @@ def signup():
         try:
             
             login_session['user'] = auth.create_user_with_email_and_password(email, password)
-            return redirect(url_for('signin'))
+            user = {"name": request.form['name'], "email":request.form['email'], "bio": request.form["bio"], "username": request.form["username"], "password": request.form["password"]}
+            db.child("Users").child(login_session['user']['localId']).set(user)
+            return redirect(url_for('add_tweet'))
             
         except:
             error = "Authentication failed"
@@ -53,6 +55,11 @@ def signup():
 
 @app.route('/add_tweet', methods=['GET', 'POST'])
 def add_tweet():
+    try:
+        tweet = {"title": request.form["title"], "text": request.form["text"], "uid": db.child("Users").child(login_session['user']['localId']).get().val()}
+        db.child("Tweets").push(tweet)
+    except:
+        print("Couldn't add tweet")
     return render_template("add_tweet.html")
 
 @app.route('/signout', methods=['GET', 'POST'])
@@ -61,7 +68,9 @@ def signout():
     auth.current_user = None
     return redirect(url_for('signin'))
     
-
-
+@app.route('/all_tweets', methods = ['GET', 'POST'])
+def all_tweets():
+    tweet = db.child("Users").child(login_session['user']['Tweets']).get().val()
+    return render_template("all_tweets.html", t = tweet)
 if __name__ == '__main__':
     app.run(debug=True)
