@@ -7,20 +7,25 @@
 <body>
     Great Job!
     <button><a href = "http://127.0.0.1:5000/signout">Signout</a></button>
-    <div>
+    
+    <form method="post" action="/add_tweet">
+        <div>
         <label>Title</label>
         <div>
             <input type="text"  name="title" id="title" required>
         </div>
-    </div>
-    <div>
+        </div>
+        <div>
         <label>Text</label>
         <div>
             <input type="text"  name="text" id="text" required>
         </div>
+        </div>
+        <div>
+        <a href = "http://127.0.0.1:5000/all_tweets"><input type="submit"/></a>
+
     </div>
-    <div>
-        <input type="submit"/>
-    </div>
+        
+    </form>
 </body>
 </html>

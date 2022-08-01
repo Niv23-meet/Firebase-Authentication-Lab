@@ -10,7 +10,7 @@ config = {
   "messagingSenderId": "1053387551914",
   "appId": "1:1053387551914:web:4276f2616109aea6b08cd3",
   "measurementId": "G-6BZJYTVZTR",
-  "databaseURL": "https://console.firebase.google.com/u/0/project/first-firebase-ff06e/database/first-firebase-ff06e-default-rtdb/data/~2F"
+  "databaseURL": "https://first-firebase-ff06e-default-rtdb.firebaseio.com/"
 }
 firebase = pyrebase.initialize_app(config)
 auth = firebase.auth()
@@ -55,11 +55,20 @@ def signup():
 
 @app.route('/add_tweet', methods=['GET', 'POST'])
 def add_tweet():
-    try:
-        tweet = {"title": request.form["title"], "text": request.form["text"], "uid": db.child("Users").child(login_session['user']['localId']).get().val()}
+    if request.method == 'POST':
+        title = request.form["title"]
+        text = request.form["text"]
+        uid = db.child("Users").child(login_session['user']['localId']).get().val()
+        print(uid)
+        #try:
+        tweet = {"title": title, "text": text, "uid": uid}
         db.child("Tweets").push(tweet)
-    except:
+        print("hey")
+
+        return redirect(url_for('all_tweets'))
+        #except:
         print("Couldn't add tweet")
+        return render_template("add_tweet.html")
     return render_template("add_tweet.html")
 
 @app.route('/signout', methods=['GET', 'POST'])
@@ -70,7 +79,9 @@ def signout():
     
 @app.route('/all_tweets', methods = ['GET', 'POST'])
 def all_tweets():
-    tweet = db.child("Users").child(login_session['user']['Tweets']).get().val()
+    tweet = db.child("Tweets").get().val()
+    
+
     return render_template("all_tweets.html", t = tweet)
 if __name__ == '__main__':
     app.run(debug=True)

@@ -6,6 +6,10 @@
 	<title>All TWEETS</title>
 </head>
 <body>
-	<h1>{{t}}</h1>
+	{% for i in t %}
+		<h1>Title: {{t[i]['title']}}</h1>
+        <h1>Text: {{t[i]['text']}}</h1>
+
+	{% endfor %}
 </body>
 </html>
