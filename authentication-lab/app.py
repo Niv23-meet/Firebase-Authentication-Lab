@@ -59,11 +59,11 @@ def add_tweet():
         title = request.form["title"]
         text = request.form["text"]
         uid = db.child("Users").child(login_session['user']['localId']).get().val()
-        print(uid)
+        
         #try:
         tweet = {"title": title, "text": text, "uid": uid}
         db.child("Tweets").push(tweet)
-        print("hey")
+        
 
         return redirect(url_for('all_tweets'))
         #except:
@@ -80,7 +80,7 @@ def signout():
 @app.route('/all_tweets', methods = ['GET', 'POST'])
 def all_tweets():
     tweet = db.child("Tweets").get().val()
-    
+
 
     return render_template("all_tweets.html", t = tweet)
 if __name__ == '__main__':
